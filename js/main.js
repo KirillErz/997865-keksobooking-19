@@ -1,27 +1,41 @@
 'use strict';
 // модель данных объявления.
-var Advert = function () {
-  this.author = {
-    avatar: String,
-  };
+var createAdvert = function () {
 
-  this.offer = {
-    title: String,
-    address: String,
-    price: Number,
-    type: String,
-    rooms: Number,
-    guests: Number,
-    checkin: String,
-    checkout: String,
-    features: [],
-    description: String,
-    photos: []
-  };
+  var types = ['palace', 'flat', 'house', 'bungalo'];
+  var checkin = ['12:00', '13:00', '14:00'];
+  var checkout = ['12:00', '13:00', '14:00'];
+  var Width = document.querySelector('.map__pins').clientWidth;
 
-  this.location = {
-    x: Number,
-    y: Number,
+  var randomUser = randomInteger(1, 8);
+  var randomType = randomInteger(0, types.length);
+  var randomCheckin = randomInteger(0, checkin.length);
+  var randomY = randomInteger(130, 630);
+  var randomX = randomInteger(1, Width);
+
+  return {
+    author: {
+      avatar: 'img/avatars/user' + '0' + randomUser + '.png',
+    },
+
+    offer: {
+      title: 'Милая уютная квартира',
+      address: '600, 350',
+      price: 5000,
+      type: types[randomType],
+      rooms: 1,
+      guests: 1,
+      checkin: checkin[randomCheckin],
+      checkout: checkout[randomCheckin],
+      features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
+      description: 'Уютный отель на берегу моря',
+      photos: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'],
+    },
+
+    location: {
+      x: randomX,
+      y: randomY,
+    },
   };
 };
 // функция возращает рандомное число от  min до max
@@ -31,33 +45,12 @@ function randomInteger(min, max) {
 }
 //  формирует моки модели Advert. принимает колличесвто сгенерированных объектов
 var gnerateAdvert = function (count) {
+
   var adverts = [];
-  var types = ['palace', 'flat', 'house', 'bungalo'];
-  var checkin = ['12:00', '13:00', '14:00'];
-  var checkout = ['12:00', '13:00', '14:00'];
-  var Width = document.querySelector('.map__pins').clientWidth;
+
   for (var i = 0; i < count; i++) {
-    var randomUser = randomInteger(1, count);
-    var randomType = randomInteger(0, types.length);
-    var randomCheckin = randomInteger(0, checkin.length);
-    var randomY = randomInteger(130, 630);
-    var randomX = randomInteger(1, Width);
-    var item = new Advert();
-    item.author.avatar = 'img/avatars/user' + '0' + randomUser + '.png';
-    item.offer.title = 'Милая уютная квартира';
-    item.offer.address = '600, 350';
-    item.offer.price = 5000;
-    item.offer.type = types[randomType];
-    item.offer.rooms = i;
-    item.offer.guests = i;
-    item.offer.checkin = checkin[randomCheckin];
-    item.offer.checkout = checkout[randomCheckin];
-    item.offer.features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-    item.offer.description = 'Уютный отель на берегу моря';
-    item.offer.photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-    item.location.x = randomX;
-    item.location.y = randomY;
-    adverts.push(item);
+    var advert = createAdvert();
+    adverts.push(advert);
   }
   return adverts;
 };
@@ -73,7 +66,7 @@ var renderMapPin = function (advert, template) {
 
 document.querySelector('.map').classList.remove('map--faded');
 
-var adverts = gnerateAdvert(8);
+var adverts = gnerateAdvert(100);
 
 var pinListElement = document.querySelector('.map__pins');
 var template = document.querySelector('#pin').content.querySelector('.map__pin');
