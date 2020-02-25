@@ -1,16 +1,14 @@
 'use strict';
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var CHECKINCHECKOUT = ['12:00', '13:00', '14:00'];
 // модель данных объявления.
 var createAdvert = function () {
 
-  var checkin = ['12:00', '13:00', '14:00'];
-  var checkout = ['12:00', '13:00', '14:00'];
   var width = document.querySelector('.map__pins').clientWidth;
-
   var randomUser = randomInteger(1, 8);
   var randomType = randomInteger(0, TYPES.length - 1);
-  var randomCheckin = randomInteger(0, checkin.length - 1);
+  var randomCheckin = randomInteger(0, CHECKINCHECKOUT.length - 1);
   var randomY = randomInteger(130, 630);
   var randomX = randomInteger(1, width);
 
@@ -26,8 +24,8 @@ var createAdvert = function () {
       type: TYPES[randomType],
       rooms: 1,
       guests: 1,
-      checkin: checkin[randomCheckin],
-      checkout: checkout[randomCheckin],
+      checkin: CHECKINCHECKOUT[randomCheckin],
+      checkout: CHECKINCHECKOUT[randomCheckin],
       features: FEATURES,
       description: 'Уютный отель на берегу моря',
       photos: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'],
@@ -65,24 +63,44 @@ var renderMapPin = function (advert, template) {
   return element;
 };
 
+function isEmpty(str) {
+  if (str === null || str === 'undefined') {
+    return true;
+  } else {
+    return false;
+  }
+}
+// скрывает блок если нет значения.
+function isNotValueHideBlock(element, className, value) {
+  if (isEmpty(value)) {
+    element.querySelector(className).remove();
+    return false;
+  } else {
+    return true;
+  }
+}
+
 var renderCard = function (advert, template) {
 
   var element = template.cloneNode(true);
 
-  element.querySelector('.popup__avatar').src = advert.author.avatar;
-  element.querySelector('.popup__title').title = advert.offer.title;
-  element.querySelector('.popup__text--address').textContent = advert.offer.address;
-  element.querySelector('.popup__text--price').textContent = advert.offer.price + '₽/ночь';
-  element.querySelector('.popup__type').textContent = getTitleType(advert.offer.type);
-  element.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
-  element.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ' выезд до ' + advert.offer.checkout;
-  element.querySelector('.popup__feature--wifi').textContent = advert.offer.features[0];
-  element.querySelector('.popup__feature--dishwasher').textContent = advert.offer.features[1];
-  element.querySelector('.popup__feature--parking').textContent = advert.offer.features[2];
-  element.querySelector('.popup__feature--washer').textContent = advert.offer.features[3];
-  element.querySelector('.popup__feature--elevator').textContent = advert.offer.features[4];
-  element.querySelector('.popup__feature--conditioner').textContent = advert.offer.features[5];
-  element.querySelector('.popup__description').textContent = advert.offer.description;
+  isNotValueHideBlock(element, '.popup__avatar', advert.author.avatar) ? element.querySelector('.popup__avatar').src = advert.author.avatar : null;
+  isNotValueHideBlock(element, '.popup__title', advert.offer.title) ? element.querySelector('.popup__title').title = advert.offer.title : null;
+  isNotValueHideBlock(element, '.popup__text--address', advert.offer.address) ? element.querySelector('.popup__text--address').textContent = advert.offer.address : null;
+  isNotValueHideBlock(element, '.popup__text--price', advert.offer.price) ? element.querySelector('.popup__text--price').textContent = advert.offer.price + ' ₽/ночь' : null;
+  isNotValueHideBlock(element, '.popup__type', getTitleType(advert.offer.type)) ? element.querySelector('.popup__type').textContent = getTitleType(advert.offer.type) : null;
+  isNotValueHideBlock(element, '.popup__text--capacity', advert.offer.rooms) && isNotValueHideBlock(element, '.popup__text--capacity', advert.offer.guests) ?
+  element.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей' : null;
+  isNotValueHideBlock(element, '.popup__text--time', advert.offer.checkin) && isNotValueHideBlock(element, '.popup__text--time', advert.offer.checkout) ?
+  element.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ' выезд до ' + advert.offer.checkout : null;
+  isNotValueHideBlock(element, '.popup__feature--wifi', advert.offer.features[0]) ? element.querySelector('.popup__feature--wifi').textContent = advert.offer.features[0] : null;
+  isNotValueHideBlock(element, '.popup__feature--dishwasher', advert.offer.features[1]) ? element.querySelector('.popup__feature--dishwasher').textContent = advert.offer.features[1] : null;
+  isNotValueHideBlock(element, '.popup__feature--parking', advert.offer.features[2]) ? element.querySelector('.popup__feature--parking').textContent = advert.offer.features[2] : null;
+  isNotValueHideBlock(element, '.popup__feature--washer', advert.offer.features[3]) ? element.querySelector('.popup__feature--washer').textContent = advert.offer.features[3] : null;
+  isNotValueHideBlock(element, '.popup__feature--elevator', advert.offer.features[4]) ? element.querySelector('.popup__feature--elevator').textContent = advert.offer.features[4] : null;
+  isNotValueHideBlock(element, '.popup__feature--conditioner', advert.offer.features[5]) ? element.querySelector('.popup__feature--conditioner').textContent = advert.offer.features[5] : null;
+  isNotValueHideBlock(element, '.popup__description', advert.offer.description) ? element.querySelector('.popup__description').textContent = advert.offer.description : null;
+
   var photo = element.querySelector('.popup__photo');
   element.querySelector('.popup__photo').remove();
   for (var i = 0; i < advert.offer.photos.length; i++) {
@@ -105,7 +123,7 @@ var getTitleType = function (type) {
     case 'bungalo':
       return 'Бунгало';
     default:
-      return 'не указано';
+      return '';
   }
 };
 
