@@ -75,8 +75,7 @@ function isNotValueHideBlock(element, className, property, value) {
   if (isEmpty(value)) {
     element.querySelector(className).remove();
   } else {
-    //element.querySelector(className).setAttribute(property, value);
-    element.querySelector(className).property(value);
+    element.querySelector(className)[property] = value;
   }
 }
 
@@ -84,24 +83,20 @@ var renderCard = function (advert, template) {
 
   var element = template.cloneNode(true);
 
-  //isNotValueHideBlock(element, '.popup__avatar', 'src',  advert.author.avatar);
+  isNotValueHideBlock(element, '.popup__avatar', 'src', advert.author.avatar);
   isNotValueHideBlock(element, '.popup__title', 'textContent', advert.offer.title);
-  //? element.querySelector('.popup__avatar').src = advert.author.avatar : null;
-  // isNotValueHideBlock(element, '.popup__title', advert.offer.title) ? element.querySelector('.popup__title').title = advert.offer.title : null;
-  // isNotValueHideBlock(element, '.popup__text--address', advert.offer.address) ? element.querySelector('.popup__text--address').textContent = advert.offer.address : null;
-  // isNotValueHideBlock(element, '.popup__text--price', advert.offer.price) ? element.querySelector('.popup__text--price').textContent = advert.offer.price + ' ₽/ночь' : null;
-  // isNotValueHideBlock(element, '.popup__type', getTitleType(advert.offer.type)) ? element.querySelector('.popup__type').textContent = getTitleType(advert.offer.type) : null;
-  // isNotValueHideBlock(element, '.popup__text--capacity', advert.offer.rooms) && isNotValueHideBlock(element, '.popup__text--capacity', advert.offer.guests) ?
-  // element.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей' : null;
-  // isNotValueHideBlock(element, '.popup__text--time', advert.offer.checkin) && isNotValueHideBlock(element, '.popup__text--time', advert.offer.checkout) ?
-  // element.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ' выезд до ' + advert.offer.checkout : null;
-  // isNotValueHideBlock(element, '.popup__feature--wifi', advert.offer.features[0]) ? element.querySelector('.popup__feature--wifi').textContent = advert.offer.features[0] : null;
-  // isNotValueHideBlock(element, '.popup__feature--dishwasher', advert.offer.features[1]) ? element.querySelector('.popup__feature--dishwasher').textContent = advert.offer.features[1] : null;
-  // isNotValueHideBlock(element, '.popup__feature--parking', advert.offer.features[2]) ? element.querySelector('.popup__feature--parking').textContent = advert.offer.features[2] : null;
-  // isNotValueHideBlock(element, '.popup__feature--washer', advert.offer.features[3]) ? element.querySelector('.popup__feature--washer').textContent = advert.offer.features[3] : null;
-  // isNotValueHideBlock(element, '.popup__feature--elevator', advert.offer.features[4]) ? element.querySelector('.popup__feature--elevator').textContent = advert.offer.features[4] : null;
-  // isNotValueHideBlock(element, '.popup__feature--conditioner', advert.offer.features[5]) ? element.querySelector('.popup__feature--conditioner').textContent = advert.offer.features[5] : null;
-  // isNotValueHideBlock(element, '.popup__description', advert.offer.description) ? element.querySelector('.popup__description').textContent = advert.offer.description : null;
+  isNotValueHideBlock(element, '.popup__text--address', 'textContent', advert.offer.address);
+  isNotValueHideBlock(element, '.popup__text--price', 'textContent', advert.offer.price + ' ₽/ночь');
+  isNotValueHideBlock(element, '.popup__type', 'textContent', getTitleType(advert.offer.type));
+  isNotValueHideBlock(element, '.popup__text--capacity', 'textContent', 'Заезд после ' + advert.offer.checkin + ' выезд до ' + advert.offer.checkout);
+  isNotValueHideBlock(element, '.popup__text--capacity', 'textContent', advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей');
+  isNotValueHideBlock(element, '.popup__feature--wifi', 'textContent', advert.offer.features[0]);
+  isNotValueHideBlock(element, '.popup__feature--dishwasher', 'textContent', advert.offer.features[1]);
+  isNotValueHideBlock(element, '.popup__feature--parking', 'textContent', advert.offer.features[2]);
+  isNotValueHideBlock(element, '.popup__feature--washer', 'textContent', advert.offer.features[3]);
+  isNotValueHideBlock(element, '.popup__feature--elevator', 'textContent', advert.offer.features[4]);
+  isNotValueHideBlock(element, '.popup__feature--conditioner', 'textContent', advert.offer.features[5]);
+  isNotValueHideBlock(element, '.popup__description', 'textContent', advert.offer.description);
 
   var photo = element.querySelector('.popup__photo');
   element.querySelector('.popup__photo').remove();
