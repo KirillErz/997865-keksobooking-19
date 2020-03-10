@@ -2,6 +2,8 @@
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var CHECKINCHECKOUT = ['12:00', '13:00', '14:00'];
+
+var ENTER_KEY = 'Enter';
 // модель данных объявления.
 var createAdvert = function () {
 
@@ -137,7 +139,9 @@ var getFragment = function (adverts, template, render) {
   return fragment;
 };
 // удаление класса для отображения меток.
-document.querySelector('.map').classList.remove('map--faded');
+//document.querySelector('.map').classList.remove('map--faded');
+
+document.querySelector('.map')
 
 var adverts = generateAdvert(10);
 // Объекты добавления
@@ -153,6 +157,28 @@ var fragmentMapPin = getFragment(adverts, mapPinsTemplate, renderMapPin);
 var fragmentCard = getFragment(adverts, cardTemplate, renderCard);
 // Добавления описания на карту
 var filters = cardListElement.querySelector('.map__filters-container');
-cardListElement.insertBefore(fragmentCard, filters); // insertBefore старый метод вставке елемента
+//cardListElement.insertBefore(fragmentCard, filters); // insertBefore старый метод вставке елемента
 // ДОбавления меток на карту
-pinListElement.appendChild(fragmentMapPin);
+//pinListElement.appendChild(fragmentMapPin);
+
+//события
+
+
+
+var pinMain = document.querySelector('.map__pin--main');
+var yourAdvert = document.querySelector('.ad-form');
+
+yourAdvert.querySelector('#address').value = pinMain.style.left.replace('/px/g','') + pinMain.querySelector('img').width + ', '  + pinMain.style.top + pinMain.querySelector('img').height;
+pinMain.addEventListener('mousedown', function (event) {
+  if (event.which === 1) {
+    document.querySelector('.map').classList.remove('map--faded');
+    yourAdvert.classList.remove('ad-form--disabled');
+    yourAdvert.querySelector('#address').value = event.clientX;
+  }
+})
+
+pinMain.addEventListener('keydown', function (event) {
+  if (event.key === ENTER_KEY) {
+    document.querySelector('.map').classList.remove('map--faded');
+  }
+})
