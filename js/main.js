@@ -157,21 +157,10 @@ var fragmentMapPin = getFragment(adverts, mapPinsTemplate, renderMapPin);
 var fragmentCard = getFragment(adverts, cardTemplate, renderCard);
 // Добавления описания на карту
 var filters = cardListElement.querySelector('.map__filters-container');
-cardListElement.insertBefore(fragmentCard, filters); // insertBefore старый метод вставке елемента
-// ДОбавления меток на карту
-pinListElement.appendChild(fragmentMapPin);
+
 
 var room = document.getElementById('room_number');
 var capacity = document.getElementById('capacity');
-// переводит из строки в число целое.
-function stringToInt(text) {
-  var integer = parseInt(text, 10);
-  return integer;
-}
-// удаление символа из стрки
-function deleteValue(str) {
-  return stringToInt.replace(str, '');
-}
 // получить главную точку
 var pinMain = document.querySelector('.map__pin--main');
 // получить форму
@@ -199,15 +188,27 @@ function setAdressAdForm(x, y) {
 var adressPin = getAdressPin(pinMain);
 adForm.querySelector('#address').value = adressPin.x + ', ' + adressPin.y;
 pinMain.addEventListener('mousedown', function (event) {
-  var self = this;
+
   if (event.which === 1) {
+    // ДОбавления меток на карту
+    pinListElement.appendChild(fragmentMapPin);
+    cardListElement.insertBefore(fragmentCard, filters);
     document.querySelector('.map').classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     // this.style.left = (event.clientY + 40) + 'px';
     // this.style.top = (event.clientX + 44) + 'px';
-    var adress = getAdressPin(self);
-    adForm.querySelector('#address').value = adress.x;
+    // var adress = getAdressPin(pinMain);
+    // adForm.querySelector('#address').value = adress.x;
     setAdressAdForm(event.clientX, event.clientY);
+  }
+});
+
+pinMain.addEventListener('keydown', function (event) {
+  if (event.key === ENTER_KEY) {
+    // ДОбавления меток на карту
+    pinListElement.appendChild(fragmentMapPin);
+    cardListElement.insertBefore(fragmentCard, filters);
+    document.querySelector('.map').classList.remove('map--faded');
   }
 });
 
@@ -226,12 +227,6 @@ room.addEventListener('input', function (evt) {
 
 capacity.addEventListener('input', function (evt) {
   validity(evt, capacity, room);
-});
-
-pinMain.addEventListener('keydown', function (event) {
-  if (event.key === ENTER_KEY) {
-    document.querySelector('.map').classList.remove('map--faded');
-  }
 });
 
 var adFrom = document.querySelector('.ad-form__submit');
