@@ -139,9 +139,9 @@ var getFragment = function (adverts, template, render) {
   return fragment;
 };
 // удаление класса для отображения меток.
-//document.querySelector('.map').classList.remove('map--faded');
+// document.querySelector('.map').classList.remove('map--faded');
 
-document.querySelector('.map')
+document.querySelector('.map');
 
 var adverts = generateAdvert(10);
 // Объекты добавления
@@ -157,28 +157,95 @@ var fragmentMapPin = getFragment(adverts, mapPinsTemplate, renderMapPin);
 var fragmentCard = getFragment(adverts, cardTemplate, renderCard);
 // Добавления описания на карту
 var filters = cardListElement.querySelector('.map__filters-container');
-//cardListElement.insertBefore(fragmentCard, filters); // insertBefore старый метод вставке елемента
+cardListElement.insertBefore(fragmentCard, filters); // insertBefore старый метод вставке елемента
 // ДОбавления меток на карту
-//pinListElement.appendChild(fragmentMapPin);
+pinListElement.appendChild(fragmentMapPin);
 
-//события
-
-
-
+var room = document.getElementById('room_number');
+var capacity = document.getElementById('capacity');
+// переводит из строки в число целое.
+function stringToInt(text) {
+  var integer = parseInt(text, 10);
+  return integer;
+}
+// удаление символа из стрки
+function deleteValue(str) {
+  return stringToInt.replace(str, '');
+}
+// получить главную точку
 var pinMain = document.querySelector('.map__pin--main');
-var yourAdvert = document.querySelector('.ad-form');
+// получить форму
+var adForm = document.querySelector('.ad-form');
 
-yourAdvert.querySelector('#address').value = pinMain.style.left.replace('/px/g','') + pinMain.querySelector('img').width + ', '  + pinMain.style.top + pinMain.querySelector('img').height;
+function getAdressPin(pin) {
+  var obj = {};
+  var widthPin = Number(pin.querySelector('img').width);
+  var heightPin = Number(pin.querySelector('img').height);
+  obj.x = Number(pin.style.left.replace('px', '')) + widthPin;
+  obj.y = Number(pin.style.top.replace('px', '')) + heightPin;
+  return obj;
+}
+
+function setAdressAdForm(x, y) {
+  var pin = document.querySelector('.map__pin--main');
+  var widthPin = Number(pin.querySelector('img').width);
+  var heightPin = Number(pin.querySelector('img').height);
+  var xAdress = Number(x) + widthPin;
+  var yAdress = Number(y) + heightPin;
+  document.querySelector('.ad-form')
+  .querySelector('#address').value = xAdress + ', ' + yAdress;
+}
+
+var adressPin = getAdressPin(pinMain);
+adForm.querySelector('#address').value = adressPin.x + ', ' + adressPin.y;
 pinMain.addEventListener('mousedown', function (event) {
+  var self = this;
   if (event.which === 1) {
     document.querySelector('.map').classList.remove('map--faded');
-    yourAdvert.classList.remove('ad-form--disabled');
-    yourAdvert.querySelector('#address').value = event.clientX;
+    adForm.classList.remove('ad-form--disabled');
+    // this.style.left = (event.clientY + 40) + 'px';
+    // this.style.top = (event.clientX + 44) + 'px';
+    var adress = getAdressPin(self);
+    adForm.querySelector('#address').value = adress.x;
+    setAdressAdForm(event.clientX, event.clientY);
   }
-})
+});
+
+var validity = function (evt, self, element) {
+  var target = evt.target;
+  if (element.value !== evt.target.value) {
+    self.setCustomValidity('колличетсво комнат и гостей должно совпадать');
+  } else {
+    target.setCustomValidity('');
+  }
+};
+
+room.addEventListener('input', function (evt) {
+  validity(evt, room, capacity);
+});
+
+capacity.addEventListener('input', function (evt) {
+  validity(evt, capacity, room);
+});
 
 pinMain.addEventListener('keydown', function (event) {
   if (event.key === ENTER_KEY) {
     document.querySelector('.map').classList.remove('map--faded');
   }
-})
+});
+
+var adFrom = document.querySelector('.ad-form__submit');
+
+adFrom.addEventListener('click', function () {
+  if (capacity.value !== room.value) {
+    if (capacity.value > room.value) {
+      capacity.setCustomValidity('колличетсво комнат и гостей должно совпадать');
+    } else {
+      room.setCustomValidity('колличетсво комнат и гостей должно совпадать');
+    }
+  } else {
+    capacity.setCustomValidity('');
+    room.setCustomValidity('');
+  }
+});
+
