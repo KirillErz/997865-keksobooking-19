@@ -2,6 +2,8 @@
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var CHECKINCHECKOUT = ['12:00', '13:00', '14:00'];
+
+var ENTER_KEY = 'Enter';
 // модель данных объявления.
 var createAdvert = function () {
 
@@ -137,7 +139,9 @@ var getFragment = function (adverts, template, render) {
   return fragment;
 };
 // удаление класса для отображения меток.
-document.querySelector('.map').classList.remove('map--faded');
+// document.querySelector('.map').classList.remove('map--faded');
+
+document.querySelector('.map');
 
 var adverts = generateAdvert(10);
 // Объекты добавления
@@ -153,6 +157,90 @@ var fragmentMapPin = getFragment(adverts, mapPinsTemplate, renderMapPin);
 var fragmentCard = getFragment(adverts, cardTemplate, renderCard);
 // Добавления описания на карту
 var filters = cardListElement.querySelector('.map__filters-container');
-cardListElement.insertBefore(fragmentCard, filters); // insertBefore старый метод вставке елемента
-// ДОбавления меток на карту
-pinListElement.appendChild(fragmentMapPin);
+
+
+var room = document.getElementById('room_number');
+var capacity = document.getElementById('capacity');
+// получить главную точку
+var pinMain = document.querySelector('.map__pin--main');
+// получить форму
+var adForm = document.querySelector('.ad-form');
+
+function getAdressPin(pin) {
+  var obj = {};
+  var widthPin = Number(pin.querySelector('img').width);
+  var heightPin = Number(pin.querySelector('img').height);
+  obj.x = Number(pin.style.left.replace('px', '')) + widthPin;
+  obj.y = Number(pin.style.top.replace('px', '')) + heightPin;
+  return obj;
+}
+
+function setAdressAdForm(x, y) {
+  var pin = document.querySelector('.map__pin--main');
+  var widthPin = Number(pin.querySelector('img').width);
+  var heightPin = Number(pin.querySelector('img').height);
+  var xAdress = Number(x) + widthPin;
+  var yAdress = Number(y) + heightPin;
+  document.querySelector('.ad-form')
+  .querySelector('#address').value = xAdress + ', ' + yAdress;
+}
+
+var adressPin = getAdressPin(pinMain);
+adForm.querySelector('#address').value = adressPin.x + ', ' + adressPin.y;
+pinMain.addEventListener('mousedown', function (event) {
+
+  if (event.which === 1) {
+    // ДОбавления меток на карту
+    pinListElement.appendChild(fragmentMapPin);
+    cardListElement.insertBefore(fragmentCard, filters);
+    document.querySelector('.map').classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+    // this.style.left = (event.clientY + 40) + 'px';
+    // this.style.top = (event.clientX + 44) + 'px';
+    // var adress = getAdressPin(pinMain);
+    // adForm.querySelector('#address').value = adress.x;
+    setAdressAdForm(event.clientX, event.clientY);
+  }
+});
+
+pinMain.addEventListener('keydown', function (event) {
+  if (event.key === ENTER_KEY) {
+    // ДОбавления меток на карту
+    pinListElement.appendChild(fragmentMapPin);
+    cardListElement.insertBefore(fragmentCard, filters);
+    document.querySelector('.map').classList.remove('map--faded');
+  }
+});
+
+var validity = function (evt, self, element) {
+  var target = evt.target;
+  if (element.value !== evt.target.value) {
+    self.setCustomValidity('колличетсво комнат и гостей должно совпадать');
+  } else {
+    target.setCustomValidity('');
+  }
+};
+
+room.addEventListener('input', function (evt) {
+  validity(evt, room, capacity);
+});
+
+capacity.addEventListener('input', function (evt) {
+  validity(evt, capacity, room);
+});
+
+var adFrom = document.querySelector('.ad-form__submit');
+
+adFrom.addEventListener('click', function () {
+  if (capacity.value !== room.value) {
+    if (capacity.value > room.value) {
+      capacity.setCustomValidity('колличетсво комнат и гостей должно совпадать');
+    } else {
+      room.setCustomValidity('колличетсво комнат и гостей должно совпадать');
+    }
+  } else {
+    capacity.setCustomValidity('');
+    room.setCustomValidity('');
+  }
+});
+
