@@ -185,6 +185,13 @@ function setAdressAdForm(x, y) {
   .querySelector('#address').value = xAdress + ', ' + yAdress;
 }
 
+var closePopup = function () {
+  setup.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+
+
 var adressPin = getAdressPin(pinMain);
 adForm.querySelector('#address').value = adressPin.x + ', ' + adressPin.y;
 pinMain.addEventListener('mousedown', function (event) {
@@ -193,8 +200,24 @@ pinMain.addEventListener('mousedown', function (event) {
     // ДОбавления меток на карту
     pinListElement.appendChild(fragmentMapPin);
     cardListElement.insertBefore(fragmentCard, filters);
+    var allCards = document.querySelectorAll('.map__card');
+    allCards.forEach((element, i, allCards) => {
+      element.classList.add('visually-hidden');
+
+    })
+    
+    var allPins = document.querySelectorAll('.map__pin');
     document.querySelector('.map').classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
+
+    allPins.forEach((element, i, allPins) => {
+      element.addEventListener('click', function () {
+        if(i > 0) {
+          allCards[i].classList.remove('visually-hidden');
+        }
+      });
+    })
+    
     // this.style.left = (event.clientY + 40) + 'px';
     // this.style.top = (event.clientX + 44) + 'px';
     // var adress = getAdressPin(pinMain);
@@ -244,3 +267,5 @@ adFrom.addEventListener('click', function () {
   }
 });
 
+
+console.log("sdfsdf")
