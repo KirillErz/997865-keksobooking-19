@@ -189,7 +189,16 @@ var closePopup = function () {
   setup.classList.add('hidden');
   document.removeEventListener('keydown', onPopupEscPress);
 };
-
+var arr = [];
+var removeCard = function (card) {
+  arr.push(card);
+  if (arr.length > 1) {
+   var lastArr =  arr.pop();
+   lastArr.classList.add('visually-hidden');
+  } else {
+    return;
+  }
+}
 
 
 var adressPin = getAdressPin(pinMain);
@@ -203,21 +212,34 @@ pinMain.addEventListener('mousedown', function (event) {
     var allCards = document.querySelectorAll('.map__card');
     allCards.forEach((element, i, allCards) => {
       element.classList.add('visually-hidden');
-
     })
-    
-    var allPins = document.querySelectorAll('.map__pin');
-    document.querySelector('.map').classList.remove('map--faded');
-    adForm.classList.remove('ad-form--disabled');
 
-    allPins.forEach((element, i, allPins) => {
-      element.addEventListener('click', function () {
-        if(i > 0) {
-          allCards[i].classList.remove('visually-hidden');
-        }
-      });
-    })
-    
+    //var allPins = document.querySelectorAll('.map__pin');
+    var filterChangeHandler = function (evt) {
+      if (evt.target && (evt.target.matches('.map__pin') || evt.target.matches('img'))) {
+
+        console.log('dsfdsdf');
+      }
+    }
+    var pins = document.querySelector('.map__pins');
+    pins.addEventListener('click', filterChangeHandler)
+    // var pinsArray = Array.prototype.slice.call(allPins);
+    // pinsArray.shift();
+     document.querySelector('.map').classList.remove('map--faded');
+     adForm.classList.remove('ad-form--disabled');
+    // pinsArray.forEach((element, i, allPins) => {
+    //   element.addEventListener('click', function () {
+    //       allCards[i].classList.remove('visually-hidden');
+    //       var card = allCards[i];
+    //       removeCard(card);
+    //       var popupClose = allCards[i].querySelector('.popup__close');
+    //       popupClose.addEventListener('click', function () {
+    //         allCards[i].classList.add('visually-hidden');
+    //         //document.removeEventListener('keydown', onPopupEscPress);
+    //       })
+    //   });
+    // });
+
     // this.style.left = (event.clientY + 40) + 'px';
     // this.style.top = (event.clientX + 44) + 'px';
     // var adress = getAdressPin(pinMain);
