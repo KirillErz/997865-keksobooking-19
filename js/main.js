@@ -13,8 +13,9 @@ var createAdvert = function () {
   var randomCheckin = randomInteger(0, CHECKINCHECKOUT.length - 1);
   var randomY = randomInteger(130, 630);
   var randomX = randomInteger(1, width);
-
+  var id = randomInteger(1, 1000);
   return {
+    id: id,
     author: {
       avatar: 'img/avatars/user' + '0' + randomUser + '.png',
     },
@@ -57,9 +58,8 @@ var generateAdvert = function (count) {
 };
 // отриосква объявлений на карте, прнимает объявление и его шаблон
 var renderMapPin = function (advert, template) {
-
   var element = template.cloneNode(true);
-
+  element.id = advert.id;
   element.querySelector('img').src = advert.author.avatar;
   element.style.cssText = 'left:' + Number(advert.location.x + element.querySelector('img').width) + 'px; top:' + Number(advert.location.y + element.querySelector('img').height) + 'px;';
   return element;
@@ -84,7 +84,6 @@ function isNotValueHideBlock(element, className, property, value) {
 var renderCard = function (advert, template) {
 
   var element = template.cloneNode(true);
-
   isNotValueHideBlock(element, '.popup__avatar', 'src', advert.author.avatar);
   isNotValueHideBlock(element, '.popup__title', 'textContent', advert.offer.title);
   isNotValueHideBlock(element, '.popup__text--address', 'textContent', advert.offer.address);
@@ -132,8 +131,14 @@ var getTitleType = function (type) {
 // -render: пеередается функция для отрисовки каждого объекта.
 var getFragment = function (adverts, template, render) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < adverts.length; i++) {
-    var advertElement = render(adverts[i], template);
+  var advertElement = null;
+  if (adverts.length !== undefined) {
+    for (var i = 0; i < adverts.length; i++) {
+      advertElement = render(adverts[i], template);
+      fragment.appendChild(advertElement);
+    }
+  } else {
+    advertElement = render(adverts, template);
     fragment.appendChild(advertElement);
   }
   return fragment;
@@ -143,7 +148,7 @@ var getFragment = function (adverts, template, render) {
 
 document.querySelector('.map');
 
-var adverts = generateAdvert(10);
+var adverts = generateAdvert(100);
 // Объекты добавления
 var pinListElement = document.querySelector('.map__pins');
 var cardListElement = document.querySelector('.map');
@@ -153,14 +158,16 @@ var mapPinsTemplate = document.querySelector('#pin').content.querySelector('.map
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 // Получить фрагмент меток на карте
 var fragmentMapPin = getFragment(adverts, mapPinsTemplate, renderMapPin);
-// Получить фрагмент описания меток
-var fragmentCard = getFragment(adverts, cardTemplate, renderCard);
 // Добавления описания на карту
 var filters = cardListElement.querySelector('.map__filters-container');
 
 
 var room = document.getElementById('room_number');
 var capacity = document.getElementById('capacity');
+var typeOfHousing = document.getElementById('type');
+var price = document.getElementById('price');
+var timein = document.getElementById('timein');
+var timeout = document.getElementById('timeout');
 // получить главную точку
 var pinMain = document.querySelector('.map__pin--main');
 // получить форму
@@ -175,84 +182,83 @@ function getAdressPin(pin) {
   return obj;
 }
 
-function setAdressAdForm(x, y) {
-  var pin = document.querySelector('.map__pin--main');
-  var widthPin = Number(pin.querySelector('img').width);
-  var heightPin = Number(pin.querySelector('img').height);
-  var xAdress = Number(x) + widthPin;
-  var yAdress = Number(y) + heightPin;
-  document.querySelector('.ad-form')
-  .querySelector('#address').value = xAdress + ', ' + yAdress;
-}
+// function setAdressAdForm(x, y) {
+//   var pin = document.querySelector('.map__pin--main');
+//   var widthPin = Number(pin.querySelector('img').width);
+//   var heightPin = Number(pin.querySelector('img').height);
+//   var xAdress = Number(x) + widthPin;
+//   var yAdress = Number(y) + heightPin;
+//   document.querySelector('.ad-form')
+//   .querySelector('#address').value = xAdress + ', ' + yAdress;
+// }
 
-var closePopup = function () {
-  setup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-var arr = [];
-var removeCard = function (card) {
-  arr.push(card);
-  if (arr.length > 1) {
-   var lastArr =  arr.pop();
-   lastArr.classList.add('visually-hidden');
-  } else {
-    return;
+var closePopupCard = function () {
+  var newCard = document.querySelector('.map__card');
+  if (newCard !== null) {
+    var closeNewCard = newCard.querySelector('.popup__close');
+    closeNewCard.addEventListener('mousedown', function () {
+      newCard.remove();
+    });
   }
-}
-
+};
 
 var adressPin = getAdressPin(pinMain);
 adForm.querySelector('#address').value = adressPin.x + ', ' + adressPin.y;
-pinMain.addEventListener('mousedown', function (event) {
-
-  if (event.which === 1) {
-    // ДОбавления меток на карту
+pinMain.addEventListener('mousedown', function (evt) {
+  if (evt.which === 1) {
     pinListElement.appendChild(fragmentMapPin);
-    cardListElement.insertBefore(fragmentCard, filters);
-    var allCards = document.querySelectorAll('.map__card');
-    allCards.forEach((element, i, allCards) => {
-      element.classList.add('visually-hidden');
-    })
-
-    //var allPins = document.querySelectorAll('.map__pin');
-    var filterChangeHandler = function (evt) {
-      if (evt.target && (evt.target.matches('.map__pin') || evt.target.matches('img'))) {
-
-        console.log('dsfdsdf');
-      }
-    }
-    var pins = document.querySelector('.map__pins');
-    pins.addEventListener('click', filterChangeHandler)
-    // var pinsArray = Array.prototype.slice.call(allPins);
-    // pinsArray.shift();
-     document.querySelector('.map').classList.remove('map--faded');
-     adForm.classList.remove('ad-form--disabled');
-    // pinsArray.forEach((element, i, allPins) => {
-    //   element.addEventListener('click', function () {
-    //       allCards[i].classList.remove('visually-hidden');
-    //       var card = allCards[i];
-    //       removeCard(card);
-    //       var popupClose = allCards[i].querySelector('.popup__close');
-    //       popupClose.addEventListener('click', function () {
-    //         allCards[i].classList.add('visually-hidden');
-    //         //document.removeEventListener('keydown', onPopupEscPress);
-    //       })
-    //   });
-    // });
-
+    document.querySelector('.map').classList.remove('map--faded');
     // this.style.left = (event.clientY + 40) + 'px';
     // this.style.top = (event.clientX + 44) + 'px';
     // var adress = getAdressPin(pinMain);
     // adForm.querySelector('#address').value = adress.x;
-    setAdressAdForm(event.clientX, event.clientY);
+    // setAdressAdForm(event.clientX, event.clientY);
   }
 });
+
+function getDescriptionPin(id) {
+  var descriptionPin = null;
+  for (var i = 0; i < adverts.length; i++) {
+    if (adverts[i].id === Number(id)) {
+      descriptionPin = adverts[i];
+    }
+  }
+  return descriptionPin;
+}
+// получение блока точек на карте.
+var pins = document.querySelector('.map__pins');
+// удаление описания
+function deleteDescriptionPin() {
+  var oldCar = document.querySelector('.map__card');
+  if (oldCar !== null) {
+    oldCar.remove();
+  }
+}
+// отобразить описание точки (кароточку)
+var showDescriptionPin = function (evt) {
+  pins.removeEventListener('mousedown', showDescriptionPin);
+  // убираем не нужное при всплытие объекта
+  if (evt.target.closest('button') && evt.target.closest('button').id !== '') {
+    deleteDescriptionPin();
+    // получаем по id точки  описание ее
+    var advert = getDescriptionPin(evt.target.closest('button').id);
+    if (advert !== null) {
+      var fragmentCard = getFragment(advert, cardTemplate, renderCard);
+      // добавлем описание на страницу, перед объектом фильтр
+      cardListElement.insertBefore(fragmentCard, filters);
+      // закрытие карточки при нажатия на карточку/
+      closePopupCard();
+    }
+  }
+  pins.addEventListener('mousedown', showDescriptionPin);
+};
+
+pins.addEventListener('mousedown', showDescriptionPin);
 
 pinMain.addEventListener('keydown', function (event) {
   if (event.key === ENTER_KEY) {
     // ДОбавления меток на карту
     pinListElement.appendChild(fragmentMapPin);
-    cardListElement.insertBefore(fragmentCard, filters);
     document.querySelector('.map').classList.remove('map--faded');
   }
 });
@@ -265,6 +271,23 @@ var validity = function (evt, self, element) {
     target.setCustomValidity('');
   }
 };
+
+typeOfHousing.addEventListener('input', function (evt) {
+
+  if (evt.target.value === 'bungalo') {
+    price.min = 0;
+    price.placeholder = 0;
+  } else if (evt.target.value === 'flat') {
+    price.min = 1000;
+    price.placeholder = 1000;
+  } else if (evt.target.value === 'house') {
+    price.min = 5000;
+    price.placeholder = 5000;
+  } else if (evt.target.value === 'palace') {
+    price.min = 10000;
+    price.placeholder = 10000;
+  }
+});
 
 room.addEventListener('input', function (evt) {
   validity(evt, room, capacity);
@@ -288,6 +311,3 @@ adFrom.addEventListener('click', function () {
     room.setCustomValidity('');
   }
 });
-
-
-console.log("sdfsdf")
