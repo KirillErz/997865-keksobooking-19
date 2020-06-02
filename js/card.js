@@ -1,13 +1,18 @@
 'use strict';
 (function () {
 
+  var adverts = window.data.adverts;
+  var isEmpty = window.utils.isEmpty;
+  var getFragment = window.utils.getFragment;
+
+
   var pins = document.querySelector('.map__pins');
   var cardListElement = document.querySelector('.map');
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var filters = cardListElement.querySelector('.map__filters-container');
   // скрывает блок если нет значения.
   function isNotValueHideBlock(element, className, property, value) {
-    if (utils.isEmpty(value)) {
+    if (isEmpty(value)) {
       element.querySelector(className).remove();
     } else {
       element.querySelector(className)[property] = value;
@@ -72,9 +77,9 @@
 
   function getDescriptionPin(id) {
     var descriptionPin = null;
-    for (var i = 0; i < data.adverts.length; i++) {
-      if (data.adverts[i].id === Number(id)) {
-        descriptionPin = data.adverts[i];
+    for (var i = 0; i < adverts.length; i++) {
+      if (adverts[i].id === Number(id)) {
+        descriptionPin = adverts[i];
       }
     }
     return descriptionPin;
@@ -95,7 +100,7 @@
       // получаем по id точки  описание ее
       var advert = getDescriptionPin(evt.target.closest('button').id);
       if (advert !== null) {
-        var fragmentCard = utils.getFragment(advert, cardTemplate, renderCard);
+        var fragmentCard = getFragment(advert, cardTemplate, renderCard);
         // добавлем описание на страницу, перед объектом фильтр
         cardListElement.insertBefore(fragmentCard, filters);
         // закрытие карточки при нажатия на карточку/

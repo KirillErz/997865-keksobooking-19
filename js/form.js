@@ -56,27 +56,11 @@
     }
   });
 
-  function getAdressPin(pin) {
-    var obj = {};
-    var widthPin = Number(pin.querySelector('img').width);
-    var heightPin = Number(pin.querySelector('img').height);
-    obj.x = Number(pin.style.left.replace('px', '')) + widthPin;
-    obj.y = Number(pin.style.top.replace('px', '')) + heightPin;
-    return obj;
-  }
-  //var adressPin = getAdressPin(pinMain);
-  //adForm.querySelector('#address').value = adressPin.x + ', ' + adressPin.y;
+  var setAdressAdForm = function (x, y) {
+    document.querySelector('.ad-form').querySelector('#address').value = x + ', ' + y;
+  };
 
-  // function setAdressAdForm(x, y) {
-  //   var pin = document.querySelector('.map__pin--main');
-  //   var widthPin = Number(pin.querySelector('img').width);
-  //   var heightPin = Number(pin.querySelector('img').height);
-  //   var xAdress = Number(x) + widthPin;
-  //   var yAdress = Number(y) + heightPin;
-  //   document.querySelector('.ad-form')
-  //   .querySelector('#address').value = xAdress + ', ' + yAdress;
-  // }
-  window.from = {
-
+  window.form = {
+    setAdressAdForm: setAdressAdForm
   };
 })();
