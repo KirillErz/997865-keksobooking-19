@@ -1,6 +1,9 @@
 'use strict';
 (function () {
 
+  var adverts = window.data.adverts;
+  var getFragment = window.utils.getFragment;
+
   // получить главную точку
   var mapPinsTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   // Получить фрагмент меток на карте
@@ -15,7 +18,7 @@
     return element;
   };
   var getPins = function () {
-    return utils.getFragment(data.adverts, mapPinsTemplate, renderMapPin);
+    return getFragment(adverts, mapPinsTemplate, renderMapPin);
   };
 
 

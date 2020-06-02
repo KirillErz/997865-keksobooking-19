@@ -1,4 +1,8 @@
+'use strict';
 (function () {
+
+  var randomInteger = window.utils.randomInteger;
+
   var TYPES = ['palace', 'flat', 'house', 'bungalo'];
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var CHECKINCHECKOUT = ['12:00', '13:00', '14:00'];
@@ -6,12 +10,12 @@
   var createAdvert = function () {
 
     var width = document.querySelector('.map__pins').clientWidth;
-    var randomUser = utils.randomInteger(1, 8);
-    var randomType = utils.randomInteger(0, TYPES.length - 1);
-    var randomCheckin = utils.randomInteger(0, CHECKINCHECKOUT.length - 1);
-    var randomY = utils.randomInteger(130, 630);
-    var randomX = utils.randomInteger(1, width);
-    var id = utils.randomInteger(1, 1000);
+    var randomUser = randomInteger(1, 8);
+    var randomType = randomInteger(0, TYPES.length - 1);
+    var randomCheckin = randomInteger(0, CHECKINCHECKOUT.length - 1);
+    var randomY = randomInteger(130, 630);
+    var randomX = randomInteger(1, width);
+    var id = randomInteger(1, 1000);
     return {
       id: id,
       author: {
